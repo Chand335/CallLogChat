@@ -1,4 +1,4 @@
-import { type User, type InsertUser, type CallLog, type InsertCallLog } from "@shared/schema";
+import { type User, type InsertUser, type CallLog, type InsertCallLog, type MessageTemplate, type InsertMessageTemplate } from "@shared/schema";
 import { randomUUID } from "crypto";
 
 export interface IStorage {
@@ -11,15 +11,21 @@ export interface IStorage {
   createCallLog(callLog: InsertCallLog): Promise<CallLog>;
   updateCallLog(id: string, callLog: Partial<InsertCallLog>): Promise<CallLog | undefined>;
   deleteCallLog(id: string): Promise<boolean>;
+
+  getMessageTemplates(): Promise<MessageTemplate[]>;
+  createMessageTemplate(template: InsertMessageTemplate): Promise<MessageTemplate>;
+  deleteMessageTemplate(id: string): Promise<boolean>;
 }
 
 export class MemStorage implements IStorage {
   private users: Map<string, User>;
   private callLogs: Map<string, CallLog>;
+  private messageTemplates: Map<string, MessageTemplate>;
 
   constructor() {
     this.users = new Map();
     this.callLogs = new Map();
+    this.messageTemplates = new Map();
   }
 
   async getUser(id: string): Promise<User | undefined> {
@@ -52,6 +58,8 @@ export class MemStorage implements IStorage {
     const callLog: CallLog = {
       ...insertCallLog,
       id,
+      duration: insertCallLog.duration || 0,
+      isFavorite: insertCallLog.isFavorite || false,
       timestamp: insertCallLog.timestamp || new Date(),
     };
     this.callLogs.set(id, callLog);
@@ -73,6 +81,24 @@ export class MemStorage implements IStorage {
 
   async deleteCallLog(id: string): Promise<boolean> {
     return this.callLogs.delete(id);
+  }
+
+  async getMessageTemplates(): Promise<MessageTemplate[]> {
+    return Array.from(this.messageTemplates.values());
+  }
+
+  async createMessageTemplate(template: InsertMessageTemplate): Promise<MessageTemplate> {
+    const id = randomUUID();
+    const messageTemplate: MessageTemplate = {
+      ...template,
+      id,
+    };
+    this.messageTemplates.set(id, messageTemplate);
+    return messageTemplate;
+  }
+
+  async deleteMessageTemplate(id: string): Promise<boolean> {
+    return this.messageTemplates.delete(id);
   }
 }
 

@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { Plus, Phone } from "lucide-react";
+import { Plus, Phone, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { SearchBar } from "@/components/search-bar";
@@ -8,6 +8,7 @@ import { FilterPills } from "@/components/filter-pills";
 import { CallLogList } from "@/components/call-log-list";
 import { AddCallForm } from "@/components/add-call-form";
 import { WhatsAppComposer } from "@/components/whatsapp-composer";
+import { TemplateManager } from "@/components/message-templates";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import type { CallLog, InsertCallLog, CallType } from "@shared/schema";
@@ -17,6 +18,7 @@ export default function Home() {
   const [selectedFilter, setSelectedFilter] = useState<CallType | "all">("all");
   const [showAddForm, setShowAddForm] = useState(false);
   const [showWhatsApp, setShowWhatsApp] = useState(false);
+  const [showTemplates, setShowTemplates] = useState(false);
   const [selectedCallLog, setSelectedCallLog] = useState<CallLog | null>(null);
   const { toast } = useToast();
 
@@ -80,14 +82,24 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <header className="sticky top-0 z-50 bg-background border-b border-border">
-        <div className="flex items-center justify-between gap-4 px-4 h-14">
+        <div className="flex items-center justify-between gap-2 px-4 h-14">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
               <Phone className="w-4 h-4 text-primary-foreground" />
             </div>
             <h1 className="text-lg font-bold text-foreground">Call Log</h1>
           </div>
-          <ThemeToggle />
+          <div className="flex items-center gap-1">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setShowTemplates(true)}
+              data-testid="button-templates"
+            >
+              <MessageSquare className="w-5 h-5" />
+            </Button>
+            <ThemeToggle />
+          </div>
         </div>
       </header>
 
@@ -135,6 +147,11 @@ export default function Home() {
         open={showWhatsApp}
         onOpenChange={setShowWhatsApp}
         callLog={selectedCallLog}
+      />
+
+      <TemplateManager
+        open={showTemplates}
+        onOpenChange={setShowTemplates}
       />
     </div>
   );

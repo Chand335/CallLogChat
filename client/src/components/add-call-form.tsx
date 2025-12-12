@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { User, Phone, PhoneIncoming, PhoneOutgoing, PhoneMissed } from "lucide-react";
+import { User, Phone, Clock, PhoneIncoming, PhoneOutgoing, PhoneMissed } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -39,6 +39,7 @@ export function AddCallForm({ open, onOpenChange, onSubmit, isPending }: AddCall
       contactName: "",
       phoneNumber: "",
       callType: "incoming",
+      duration: 0,
     },
   });
 
@@ -93,6 +94,31 @@ export function AddCallForm({ open, onOpenChange, onSubmit, isPending }: AddCall
                         placeholder="Enter phone number with country code"
                         className="pl-10"
                         data-testid="input-phone-number"
+                      />
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="duration"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm font-medium">Call Duration (seconds)</FormLabel>
+                  <FormControl>
+                    <div className="relative">
+                      <Clock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                      <Input
+                        {...field}
+                        type="number"
+                        min="0"
+                        placeholder="0"
+                        className="pl-10"
+                        onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
+                        data-testid="input-duration"
                       />
                     </div>
                   </FormControl>

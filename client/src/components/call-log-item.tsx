@@ -72,12 +72,19 @@ export function CallLogItem({ callLog, onWhatsAppClick }: CallLogItemProps) {
             </span>
             <Icon className={`w-4 h-4 flex-shrink-0 ${colorClass}`} />
           </div>
-          <p
-            className="text-sm text-muted-foreground truncate"
-            data-testid={`text-phone-number-${callLog.id}`}
-          >
-            {callLog.phoneNumber}
-          </p>
+          <div className="flex items-center gap-2">
+            <p
+              className="text-sm text-muted-foreground truncate flex-1"
+              data-testid={`text-phone-number-${callLog.id}`}
+            >
+              {callLog.phoneNumber}
+            </p>
+            {(callLog.duration ?? 0) > 0 && (
+              <span className="text-xs text-muted-foreground whitespace-nowrap">
+                {Math.floor((callLog.duration ?? 0) / 60)}m {(callLog.duration ?? 0) % 60}s
+              </span>
+            )}
+          </div>
           <p className="text-xs text-muted-foreground">
             {isToday
               ? formatDistanceToNow(timestamp, { addSuffix: true })
